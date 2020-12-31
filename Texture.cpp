@@ -17,14 +17,14 @@ void Texture::GetTextureDimensions(int* w, int* h)
 	}
 }
 
-void Texture::Draw(SDL_Rect destinationRect)
+void Texture::Draw(int x, int y)
 {
 
 	SDL_Rect destination;
-	destination.x = 0; destination.y = 0;
-	destination.w = 32; destination.h = 32;
+	destination.x = x; destination.y = y;
+	destination.w = 32*10; destination.h = 32*3;
 
-	if (SDL_RenderCopy(renderer, texture, NULL, NULL) == -1)
+	if (SDL_RenderCopy(renderer, texture, NULL, &destination) == -1)
 	{
 		std::cout << "Texture drawing failed." << std::endl;
 	}

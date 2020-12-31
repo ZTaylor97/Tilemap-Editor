@@ -14,6 +14,8 @@ private:
 	const float FRAME_TIME = 1000.0f / (float)FPS;
 
 	int mouseX, mouseY;
+	int currentTileX = 0;
+	int currentTileY = 0;
 
 	AssetManager *assetManager;
 	std::vector<Tile*> tiles;
@@ -23,6 +25,8 @@ public:
 	SDL_Event event;
 
 	inline bool IsRunning() const { return isRunning; }
+
+	void PlaceTile();
 
 	void Initialise();
 	void ProcessInput();

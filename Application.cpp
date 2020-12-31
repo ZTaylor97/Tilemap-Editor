@@ -33,20 +33,6 @@ void Application::Initialise()
 	assetManager = new AssetManager(renderer);
 	assetManager->LoadTexture("./Tilesets/jungle.png", "test");
 
-	SDL_GetMouseState(&mouseX, &mouseY);
-
-	SDL_Rect sourceRect = {
-		0, 0, 32,32
-	};
-
-	SDL_Rect destRect = {
-	mouseX, mouseY, 32,32
-	};
-
-	Tile* newTile = new Tile(assetManager->GetTexture("test"), sourceRect, destRect);
-
-	tiles.push_back(newTile);
-
 	isRunning = true;
 }
 
@@ -68,10 +54,63 @@ void Application::ProcessInput()
 			}
 			break;
 		}
+		case SDL_MOUSEBUTTONDOWN:
+		{
+			if (event.button.button == (SDL_BUTTON_LEFT))
+			{
+				SDL_GetMouseState(&mouseX, &mouseY);
+				PlaceTile();
+				
+			}
+			break;
+		}
+		case SDL_MOUSEWHEEL:
+		{
+			
+			if (event.wheel.y > 0)
+			{
+				currentTileX++;
+
+				if (currentTileX >= 10)
+				{
+					currentTileX = 0;
+					currentTileY++;
+				}
+
+				std::cout << "Scroll detected" << std::endl;
+				event.wheel.y = 0;
+			}
+			if (event.wheel.y < 0)
+			{
+				if (currentTileX >= 0) currentTileX--;
+
+				std::cout << "Scroll detected" << std::endl;
+				event.wheel.y = 0;
+			}
+			break;
+		}
 		default: {
 			break;
 		}
 	}
+}
+
+void Application::PlaceTile()
+{
+	SDL_Rect sourceRect = {
+		currentTileX*32, currentTileY*32, 32,32
+	};
+
+	int xGrid = mouseX / 32;
+	int yGrid = mouseY / 32;
+
+	SDL_Rect destRect = {
+		xGrid*32, yGrid*32, 32,32
+	};
+
+	Tile* newTile = new Tile(assetManager->GetTexture("test"), sourceRect, destRect);
+
+	tiles.push_back(newTile);
 }
 
 void Application::Update()
@@ -101,6 +140,8 @@ void Application::Render()
 	{
 		tile->Draw();
 	}
+
+	assetManager->GetTexture("test")->Draw(0,800);
 
 	SDL_RenderPresent(renderer);
 }
