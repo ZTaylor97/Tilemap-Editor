@@ -2,9 +2,13 @@
 #include <iostream>
 #include <SDL.h>
 #include <vector>
+#include <string>
 
 #include "AssetManager.h"
 #include "Tile.h"
+
+#include "libs/lua/lua.hpp"
+#include "libs/lua/sol.hpp"
 class Application
 {
 private:
@@ -17,6 +21,8 @@ private:
 	int currentTileX = 0;
 	int currentTileY = 0;
 
+	std::string activeTexture;
+
 	AssetManager *assetManager;
 	std::vector<Tile*> tiles;
 public:
@@ -27,10 +33,10 @@ public:
 	inline bool IsRunning() const { return isRunning; }
 
 	void PlaceTile();
-
 	void Initialise();
 	void ProcessInput();
 	void Update();
 	void Render();
+	void ParseInputFile(const char* filePath);
 };
 

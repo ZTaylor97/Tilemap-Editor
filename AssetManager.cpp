@@ -10,9 +10,12 @@ Texture* AssetManager::GetTexture(std::string textureId)
 	return textures.at(textureId);
 }
 
-void AssetManager::LoadTexture(const char* filePath, std::string textureId)
+void AssetManager::LoadTexture(sol::table textureTable)
 {
-	SDL_Surface* surface = IMG_Load(filePath);
+	std::string filePath = textureTable["filepath"];
+	std::string textureId = textureTable["textureid"];
+
+	SDL_Surface* surface = IMG_Load(filePath.c_str());
 
 	if (surface == NULL)
 	{
@@ -22,7 +25,7 @@ void AssetManager::LoadTexture(const char* filePath, std::string textureId)
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
 
-	Texture* newTexture = new Texture(renderer, texture);
+	Texture* newTexture = new Texture(renderer, texture, textureTable);
 	
 	textures.emplace(textureId, newTexture);
 }

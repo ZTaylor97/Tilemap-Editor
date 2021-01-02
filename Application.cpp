@@ -31,7 +31,9 @@ void Application::Initialise()
 
 	// Create a new asset manager
 	assetManager = new AssetManager(renderer);
-	assetManager->LoadTexture("./Tilesets/jungle.png", "test");
+
+	ParseInputFile("./config.lua");
+	activeTexture = "test";
 
 	isRunning = true;
 }
@@ -66,27 +68,46 @@ void Application::ProcessInput()
 		}
 		case SDL_MOUSEWHEEL:
 		{
-			
 			if (event.wheel.y > 0)
 			{
-				currentTileX++;
+				// Scroll to the right if there is room to scroll
+				if (currentTileX <= assetManager->GetTexture(activeTexture)->tilesPerRow && 
+					currentTileY < assetManager->GetTexture(activeTexture)->tilesPerColumn)
+				{
+					currentTileX++;
+				}
 
-				if (currentTileX >= 10)
+				// Go down a row if scrolling past the rightmost tile
+				if (currentTileX >= assetManager->GetTexture(activeTexture)->tilesPerRow && 
+					currentTileY < assetManager->GetTexture(activeTexture)->tilesPerColumn)
 				{
 					currentTileX = 0;
 					currentTileY++;
 				}
-
-				std::cout << "Scroll detected" << std::endl;
-				event.wheel.y = 0;
+				if (currentTileY >= assetManager->GetTexture(activeTexture)->tilesPerColumn)
+				{
+					currentTileX = assetManager->GetTexture(activeTexture)->tilesPerRow - 1;
+					currentTileY--;
+				}
+	
 			}
 			if (event.wheel.y < 0)
 			{
-				if (currentTileX >= 0) currentTileX--;
+				// Scroll to the left if there is still room to move
+				currentTileX--;
+				// Go up a row if scrolling past leftmost tile
+				if (currentTileX < 0 && currentTileY > 0)
+				{
+					currentTileX = assetManager->GetTexture(activeTexture)->tilesPerRow - 1;
+					currentTileY--;
+				}
 
-				std::cout << "Scroll detected" << std::endl;
-				event.wheel.y = 0;
+				if (currentTileX < 0) currentTileX = 0;
 			}
+			// Reset wheel to 0 after every scroll
+			event.wheel.y = 0;
+
+			std::cout << currentTileX << " " << currentTileY << std::endl;
 			break;
 		}
 		default: {
@@ -97,15 +118,23 @@ void Application::ProcessInput()
 
 void Application::PlaceTile()
 {
+	Texture* currentTexture = assetManager->GetTexture(activeTexture);
+
 	SDL_Rect sourceRect = {
-		currentTileX*32, currentTileY*32, 32,32
+		currentTileX*currentTexture->tileWidth, 
+		currentTileY*currentTexture->tileHeight,
+		currentTexture->tileWidth, 
+		currentTexture->tileHeight
 	};
 
-	int xGrid = mouseX / 32;
-	int yGrid = mouseY / 32;
+	int xGrid = mouseX / currentTexture->tileWidth;
+	int yGrid = mouseY / currentTexture->tileHeight;
 
 	SDL_Rect destRect = {
-		xGrid*32, yGrid*32, 32,32
+		xGrid*currentTexture->tileWidth, 
+		yGrid*currentTexture->tileHeight,
+		currentTexture->tileHeight,
+		currentTexture->tileHeight
 	};
 
 	Tile* newTile = new Tile(assetManager->GetTexture("test"), sourceRect, destRect);
@@ -144,4 +173,32 @@ void Application::Render()
 	assetManager->GetTexture("test")->Draw(0,800);
 
 	SDL_RenderPresent(renderer);
+}
+
+void Application::ParseInputFile(const char* filePath)
+{
+	sol::state lua;
+	lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
+
+	// Prepare to open the correct lua level file
+	lua.script_file(filePath);
+
+	sol::table texturelist = lua["textures"];
+
+	size_t i = 0;
+
+	// Check existence of sol table before using it in LoadTexture
+	sol::optional<sol::table> existsTextureId = texturelist[i];
+	while (1)
+	{
+		sol::optional<sol::table> existsTextureId = texturelist[i];
+		if (existsTextureId == sol::nullopt)
+		{
+			break;
+		}
+
+		assetManager->LoadTexture(texturelist[i]);
+		++i;
+	}
+
 }

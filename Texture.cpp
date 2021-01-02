@@ -1,12 +1,13 @@
 #include "Texture.h"
 
-Texture::Texture(SDL_Renderer *renderer, SDL_Texture* texture)
+Texture::Texture(SDL_Renderer *renderer, SDL_Texture* texture, sol::table fileTable)
 	:renderer(renderer), texture(texture)
 {
-	sourceRect =
-	{
-		0,0,32,32
-	};
+	tileWidth = fileTable["tiledimensions"]["x"];
+	tileHeight = fileTable["tiledimensions"]["y"];
+	numTiles = fileTable["totaltiles"];
+	tilesPerRow = fileTable["filedimensions"]["xtiles"];
+	tilesPerColumn = fileTable["filedimensions"]["ytiles"];
 }
 
 void Texture::GetTextureDimensions(int* w, int* h)
@@ -19,7 +20,6 @@ void Texture::GetTextureDimensions(int* w, int* h)
 
 void Texture::Draw(int x, int y)
 {
-
 	SDL_Rect destination;
 	destination.x = x; destination.y = y;
 	destination.w = 32*10; destination.h = 32*3;

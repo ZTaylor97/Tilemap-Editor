@@ -15,11 +15,10 @@ private:
 	std::map<std::string, Texture*> textures;
 	SDL_Renderer* renderer;
 public:
-	AssetManager(SDL_Renderer * renderer);
-
+	AssetManager(SDL_Renderer * renderer); 
 
 	Texture* GetTexture(std::string textureId);
-	void LoadTexture(const char* filePath, std::string textureId);
+	void LoadTexture(sol::table textureTable);
 	void Draw();
 };
 

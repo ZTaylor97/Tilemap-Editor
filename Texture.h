@@ -4,14 +4,21 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+
+#include "libs/lua/lua.hpp"
+#include "libs/lua/sol.hpp"
 class Texture
 {
 private:
-	SDL_Rect sourceRect;
 	SDL_Texture* texture;
 public:
 	SDL_Renderer* renderer;
-	Texture(SDL_Renderer* renderer, SDL_Texture* texture);
+
+	int tileWidth, tileHeight;
+	int tilesPerRow, tilesPerColumn;
+	int numTiles;
+
+	Texture(SDL_Renderer* renderer, SDL_Texture* texture, sol::table fileTable);
 	void GetTextureDimensions(int *w, int *h);
 	void Draw(int x, int y);
 
