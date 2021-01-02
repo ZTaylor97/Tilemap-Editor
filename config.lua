@@ -14,3 +14,9 @@ textures = {
         totaltiles = 30
     }
 }
+
+mapattributes = {
+    dimensions = {
+        x = 
+    }
+}
