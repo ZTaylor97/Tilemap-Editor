@@ -12,8 +12,8 @@ void Application::Initialise()
 		NULL,
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		1920,
-		1080,
+		WindowWidth,
+		WindowHeight,
 		SDL_WINDOW_RESIZABLE
 	);
 	if (!window)
@@ -170,7 +170,9 @@ void Application::Render()
 		tile->Draw();
 	}
 
-	assetManager->GetTexture("test")->Draw(0,800);
+	assetManager->GetTexture("test")->Draw(0,984);
+
+	DrawGrid();
 
 	SDL_RenderPresent(renderer);
 }
@@ -201,4 +203,52 @@ void Application::ParseInputFile(const char* filePath)
 		++i;
 	}
 
+}
+
+void Application::Close()
+{
+	assetManager->ClearTextures();
+	if (renderer)
+	{
+		SDL_DestroyRenderer(renderer);
+	}
+
+	if (window)
+	{
+		SDL_DestroyWindow(window);
+	}
+
+	SDL_Quit();
+}
+
+void Application::DrawGrid()
+{
+	const Texture* gridInfo = assetManager->GetTexture(activeTexture);
+
+	// The number of gridlines to draw in order to avoid drawing them over the texture preview
+	// TODO: Change this later once the UI is done
+	int horizontalGridLines = (WindowHeight - gridInfo->tileHeight * gridInfo->tilesPerColumn) / gridInfo->tileHeight;
+	int verticalGridLines = WindowWidth / gridInfo->tileWidth;
+
+	SDL_SetRenderDrawColor(renderer, 50, 50, 50, SDL_ALPHA_OPAQUE);
+
+	for (size_t i = 1; i < horizontalGridLines; i++)
+	{
+		SDL_RenderDrawLine(renderer,
+			0,
+			i * gridInfo->tileHeight,
+			WindowWidth,
+			i * gridInfo->tileHeight
+			);
+	}
+
+	for (size_t i = 1; i < verticalGridLines; i++)
+	{
+		SDL_RenderDrawLine(renderer,
+			i * gridInfo->tileWidth,
+			0,
+			i * gridInfo->tileWidth,
+			WindowHeight - gridInfo->tileHeight * gridInfo->tilesPerColumn
+		);
+	}
 }

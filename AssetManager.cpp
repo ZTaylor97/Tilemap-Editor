@@ -30,6 +30,14 @@ void AssetManager::LoadTexture(sol::table textureTable)
 	textures.emplace(textureId, newTexture);
 }
 
+void AssetManager::ClearTextures()
+{
+	for(auto & texture: textures)
+	{
+		textures.erase(texture.first);
+	}
+}
+
 void AssetManager::Draw()
 {
 }

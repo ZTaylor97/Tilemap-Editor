@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 		app->Render();
 	}
 
+	app->Close();
 
 	return 0;
 }

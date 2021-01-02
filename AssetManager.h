@@ -20,5 +20,7 @@ public:
 	Texture* GetTexture(std::string textureId);
 	void LoadTexture(sol::table textureTable);
 	void Draw();
+
+	void ClearTextures();
 };
 

@@ -14,6 +14,9 @@ class Application
 private:
 	bool isRunning;
 
+	const int WindowWidth = 1920;
+	const int WindowHeight = 1080;
+
 	const unsigned int FPS = 60;
 	const float FRAME_TIME = 1000.0f / (float)FPS;
 
@@ -38,5 +41,7 @@ public:
 	void Update();
 	void Render();
 	void ParseInputFile(const char* filePath);
+	void Close();
+	void DrawGrid();
 };
 

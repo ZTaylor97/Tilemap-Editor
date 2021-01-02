@@ -1,6 +1,6 @@
 textures = {
     [0] = {
-        filepath = "./Tilesets/jungle-night.png",
+        filepath = "./Tilesets/jungle.png",
         textureid = "test",
         tiledimensions = {
             x = 32,
@@ -12,11 +12,5 @@ textures = {
             ytiles = 3
         },
         totaltiles = 30
-    }
-}
-
-mapattributes = {
-    dimensions = {
-        x = 
     }
 }
