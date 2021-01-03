@@ -18,11 +18,11 @@ void Texture::GetTextureDimensions(int* w, int* h)
 	}
 }
 
-void Texture::Draw(int x, int y)
+void Texture::Draw()
 {
 	SDL_Rect destination;
-	destination.x = x; destination.y = y;
-	destination.w = 32*10; destination.h = 32*3;
+	destination.x = drawLocation[0]; destination.y = drawLocation[1];
+	destination.w = tileWidth*tilesPerRow; destination.h = tileHeight*tilesPerColumn;
 
 	if (SDL_RenderCopy(renderer, texture, NULL, &destination) == -1)
 	{

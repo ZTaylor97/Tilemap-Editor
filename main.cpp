@@ -12,6 +12,8 @@ int main(int argc, char* argv[])
 
 	app->Initialise();
 
+	 
+
 	while (app->IsRunning())
 	{
 		app->ProcessInput();

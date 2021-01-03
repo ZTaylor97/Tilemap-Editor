@@ -11,6 +11,8 @@ class Texture
 {
 private:
 	SDL_Texture* texture;
+	int drawLocation[2] = {0,984};
+
 public:
 	SDL_Renderer* renderer;
 
@@ -18,9 +20,13 @@ public:
 	int tilesPerRow, tilesPerColumn;
 	int numTiles;
 
+	void setDrawLocation(int x, int y) { drawLocation[0] = x; drawLocation[1] = y;}
+
 	Texture(SDL_Renderer* renderer, SDL_Texture* texture, sol::table fileTable);
 	void GetTextureDimensions(int *w, int *h);
-	void Draw(int x, int y);
+	void Draw();
+
+	SDL_Rect GetDrawLocation() { return { drawLocation[0], drawLocation[1], tilesPerRow * tileWidth, tilesPerColumn * tileHeight }; }
 
 	SDL_Texture* GetTexture() const { return texture; }
 };

@@ -17,6 +17,8 @@ private:
 	const int WindowWidth = 1920;
 	const int WindowHeight = 1080;
 
+	const int gridHeight = 960;
+
 	const unsigned int FPS = 60;
 	const float FRAME_TIME = 1000.0f / (float)FPS;
 

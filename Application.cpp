@@ -61,8 +61,25 @@ void Application::ProcessInput()
 			if (event.button.button == (SDL_BUTTON_LEFT))
 			{
 				SDL_GetMouseState(&mouseX, &mouseY);
-				PlaceTile();
 				
+				if(mouseY < gridHeight) PlaceTile();
+
+				SDL_Point mousePoint = { mouseX, mouseY };
+
+				Texture *texture = assetManager->GetTexture(activeTexture);
+
+				SDL_Rect textureRect = texture->GetDrawLocation();
+
+				if (SDL_PointInRect(&mousePoint, &textureRect))
+				{
+					
+
+					currentTileX = (mousePoint.x - textureRect.x) / texture->tileWidth;
+					currentTileY = (mousePoint.y - textureRect.y) / texture->tileHeight;
+
+					std::cout << "Click detected at: " << currentTileX << " " << currentTileY << std::endl;
+				}
+
 			}
 			break;
 		}
@@ -170,7 +187,7 @@ void Application::Render()
 		tile->Draw();
 	}
 
-	assetManager->GetTexture("test")->Draw(0,984);
+	assetManager->GetTexture("test")->Draw();
 
 	DrawGrid();
 
@@ -248,7 +265,7 @@ void Application::DrawGrid()
 			i * gridInfo->tileWidth,
 			0,
 			i * gridInfo->tileWidth,
-			WindowHeight - gridInfo->tileHeight * gridInfo->tilesPerColumn
+			horizontalGridLines * gridInfo->tileHeight
 		);
 	}
 }
