@@ -11,7 +11,7 @@ class Texture
 {
 private:
 	SDL_Texture* texture;
-	int drawLocation[2] = {0,984};
+	int drawLocation[2] = {100,984};
 
 public:
 	SDL_Renderer* renderer;

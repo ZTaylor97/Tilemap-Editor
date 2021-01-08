@@ -45,5 +45,8 @@ public:
 	void ParseInputFile(const char* filePath);
 	void Close();
 	void DrawGrid();
+	void DrawCurrentTileBorder();
+
+	std::vector<Tile*> GetTilesByTextureId(std::string textureid);
 };
 

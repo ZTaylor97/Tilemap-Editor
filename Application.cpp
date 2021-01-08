@@ -62,18 +62,16 @@ void Application::ProcessInput()
 			{
 				SDL_GetMouseState(&mouseX, &mouseY);
 				
+				// Place tile if it is within the editable region
 				if(mouseY < gridHeight) PlaceTile();
 
+				// Get all the useful information for detecting clicks on the tiles
 				SDL_Point mousePoint = { mouseX, mouseY };
-
 				Texture *texture = assetManager->GetTexture(activeTexture);
-
 				SDL_Rect textureRect = texture->GetDrawLocation();
 
 				if (SDL_PointInRect(&mousePoint, &textureRect))
 				{
-					
-
 					currentTileX = (mousePoint.x - textureRect.x) / texture->tileWidth;
 					currentTileY = (mousePoint.y - textureRect.y) / texture->tileHeight;
 
@@ -85,7 +83,7 @@ void Application::ProcessInput()
 		}
 		case SDL_MOUSEWHEEL:
 		{
-			if (event.wheel.y > 0)
+			if (event.wheel.y < 0)
 			{
 				// Scroll to the right if there is room to scroll
 				if (currentTileX <= assetManager->GetTexture(activeTexture)->tilesPerRow && 
@@ -108,7 +106,7 @@ void Application::ProcessInput()
 				}
 	
 			}
-			if (event.wheel.y < 0)
+			if (event.wheel.y > 0)
 			{
 				// Scroll to the left if there is still room to move
 				currentTileX--;
@@ -154,7 +152,7 @@ void Application::PlaceTile()
 		currentTexture->tileHeight
 	};
 
-	Tile* newTile = new Tile(assetManager->GetTexture("test"), sourceRect, destRect);
+	Tile* newTile = new Tile(assetManager->GetTexture(activeTexture), sourceRect, destRect);
 
 	tiles.push_back(newTile);
 }
@@ -190,6 +188,8 @@ void Application::Render()
 	assetManager->GetTexture("test")->Draw();
 
 	DrawGrid();
+
+	DrawCurrentTileBorder();
 
 	SDL_RenderPresent(renderer);
 }
@@ -268,4 +268,27 @@ void Application::DrawGrid()
 			horizontalGridLines * gridInfo->tileHeight
 		);
 	}
+}
+
+std::vector<Tile*> Application::GetTilesByTextureId(std::string textureid)
+{
+	for (auto& tile : tiles)
+	{
+		// TODO
+	}
+}
+
+void Application::DrawCurrentTileBorder()
+{
+	Texture* thisTexture = assetManager->GetTexture(activeTexture);
+
+	SDL_Rect theRect =
+	{
+		thisTexture->GetDrawLocation().x + currentTileX* thisTexture->tileWidth,
+		thisTexture->GetDrawLocation().y + currentTileY * thisTexture->tileHeight,
+		thisTexture->tileWidth,
+		thisTexture->tileHeight
+	};
+	SDL_SetRenderDrawColor(renderer, 0, 255, 255, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawRect(renderer, &theRect);
 }
