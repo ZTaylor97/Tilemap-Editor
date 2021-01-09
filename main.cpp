@@ -21,6 +21,8 @@ int main(int argc, char* argv[])
 		app->Render();
 	}
 
+	app->OutputFile();
+
 	app->Close();
 
 	return 0;

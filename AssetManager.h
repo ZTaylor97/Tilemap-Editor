@@ -21,6 +21,8 @@ public:
 	void LoadTexture(sol::table textureTable);
 	void Draw();
 
+	const std::map<std::string, Texture*> GetTextures() { return textures; }
+
 	void ClearTextures();
 };
 

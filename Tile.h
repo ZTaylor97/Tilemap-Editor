@@ -12,6 +12,7 @@ public:
 	Tile(Texture* sourceTexture, SDL_Rect tileSource, SDL_Rect tileCoord);
 
 	void Draw();
+	SDL_Rect GetTileCoord() { return tileCoord; }
 
 	friend std::ostream& operator<<(std::ostream& os, const Tile& tile);
 };

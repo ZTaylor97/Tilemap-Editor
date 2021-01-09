@@ -12,24 +12,17 @@ void Tile::Draw()
 
 std::ostream& operator<<(std::ostream& os, const Tile& tile)
 {
-	/* Format of output should be:
-	* tileSource = {
-		SourceX, SourceY, SourceW, SourceH
-	},
-	  tileDest = {
-	  DestX, DestY, DestW, DestH
-	 }
-	*/
 
+	os	<< "\n\ttilesource = {\n"
+		<< "\t\tx = " << tile.tileSource.x/ tile.tileSource.w << ",\n"
+		<< "\t\ty = " << tile.tileSource.y/ tile.tileSource.h << ",\n"
+		<< "\t\tw = " << tile.tileSource.w << ",\n"
+		<< "\t\th = " << tile.tileSource.h << "\n\t},\n"
+		<< "\ttiledest = {\n"
+		<< "\t\tx = " << tile.tileCoord.x / tile.tileCoord.w << ",\n"
+		<< "\t\ty = " << tile.tileCoord.y / tile.tileCoord.h << ",\n"
+		<< "\t\tw = " << tile.tileCoord.w << ",\n"
+		<< "\t\th = " << tile.tileCoord.h << "\n\t}\n";
 
-	os << "tilesource = {\n"
-		<< "x" << tile.tileSource.x << ","
-		<< "y" << tile.tileSource.y << ","
-		<< "w" << tile.tileSource.w << ","
-		<< "h" << tile.tileSource.h << "},\n"
-		<< "tiledest = {\n"
-		<< "x" << tile.tileCoord.x << ","
-		<< "y" << tile.tileCoord.y << ","
-		<< "w" << tile.tileCoord.w << ","
-		<< "h" << tile.tileCoord.h << "}/n";
+	return os;
 }

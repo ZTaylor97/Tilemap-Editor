@@ -40,7 +40,11 @@ void Application::Initialise()
 
 void Application::ProcessInput()
 {
+	// Flag for keeping track of left mouse clicks
+	static bool mouseDown = false;
+
 	SDL_PollEvent(&event);
+
 	switch (event.type) 
 	{
 		case SDL_QUIT: 
@@ -58,31 +62,54 @@ void Application::ProcessInput()
 		}
 		case SDL_MOUSEBUTTONDOWN:
 		{
-			if (event.button.button == (SDL_BUTTON_LEFT))
+			SDL_GetMouseState(&mouseX, &mouseY);
+			SDL_Point mousePoint = { mouseX, mouseY };
+			
+			if (event.button.button == (SDL_BUTTON_LEFT) && mouseDown == false)
 			{
-				SDL_GetMouseState(&mouseX, &mouseY);
-				
+				mouseDown = true;
 				// Place tile if it is within the editable region
-				if(mouseY < gridHeight) PlaceTile();
+				if (mouseY < gridHeight)
+				{
+					PlaceTile();
+				}
 
 				// Get all the useful information for detecting clicks on the tiles
-				SDL_Point mousePoint = { mouseX, mouseY };
 				Texture *texture = assetManager->GetTexture(activeTexture);
 				SDL_Rect textureRect = texture->GetDrawLocation();
 
+				// Check if mouse click occurs where the tileset is drawn on the window
 				if (SDL_PointInRect(&mousePoint, &textureRect))
 				{
-					currentTileX = (mousePoint.x - textureRect.x) / texture->tileWidth;
+					currentTileX = (mousePoint.x - textureRect.x) / texture->tileWidth; 
 					currentTileY = (mousePoint.y - textureRect.y) / texture->tileHeight;
-
-					std::cout << "Click detected at: " << currentTileX << " " << currentTileY << std::endl;
 				}
-
 			}
+			// Delete a tile on right click
+			if (event.button.button == SDL_BUTTON_RIGHT)
+			{
+				size_t i = 0;
+				for (auto tile : tiles)
+				{
+					SDL_Rect tileRect = tile->GetTileCoord();
+					if (SDL_PointInRect(&mousePoint, &tileRect))
+					{
+						tiles.erase(tiles.begin() + i);
+						break;
+					}
+					i++;
+				}
+			}
+			
 			break;
 		}
+		case SDL_MOUSEBUTTONUP:
+			// Reset mouseDown for click event
+			mouseDown = false;
+			break;
 		case SDL_MOUSEWHEEL:
 		{
+			// Scroll down
 			if (event.wheel.y < 0)
 			{
 				// Scroll to the right if there is room to scroll
@@ -106,23 +133,23 @@ void Application::ProcessInput()
 				}
 	
 			}
+			// Scroll up
 			if (event.wheel.y > 0)
 			{
 				// Scroll to the left if there is still room to move
 				currentTileX--;
-				// Go up a row if scrolling past leftmost tile
+				// Go up a row if scrolling past leftmost tile and there are rows above
 				if (currentTileX < 0 && currentTileY > 0)
 				{
 					currentTileX = assetManager->GetTexture(activeTexture)->tilesPerRow - 1;
 					currentTileY--;
 				}
 
+				// Prevent negative values for tile row
 				if (currentTileX < 0) currentTileX = 0;
 			}
 			// Reset wheel to 0 after every scroll
 			event.wheel.y = 0;
-
-			std::cout << currentTileX << " " << currentTileY << std::endl;
 			break;
 		}
 		default: {
@@ -282,13 +309,38 @@ void Application::DrawCurrentTileBorder()
 {
 	Texture* thisTexture = assetManager->GetTexture(activeTexture);
 
-	SDL_Rect theRect =
-	{
+	// Create a rect for drawing that draws to the selected tile
+	SDL_Rect borderRect = {
 		thisTexture->GetDrawLocation().x + currentTileX* thisTexture->tileWidth,
 		thisTexture->GetDrawLocation().y + currentTileY * thisTexture->tileHeight,
 		thisTexture->tileWidth,
 		thisTexture->tileHeight
 	};
-	SDL_SetRenderDrawColor(renderer, 0, 255, 255, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawRect(renderer, &theRect);
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawRect(renderer, &borderRect);
+}
+
+void Application::OutputFile()
+{
+	std::ofstream outFile;
+
+	outFile.open("output.map", std::ios::out);
+
+
+	size_t i = 0;
+	for (auto tile : tiles)
+	{
+		outFile << "[" << i << "] = {" << *tile << "}";
+
+		if (tile != tiles.back())
+		{
+			outFile << ',';
+		}
+
+		outFile << '\n';
+		i++;
+	}
+
+	outFile.close();
 }

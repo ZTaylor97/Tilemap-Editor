@@ -1,5 +1,7 @@
 #pragma once
+#include <fstream>
 #include <iostream>
+
 #include <SDL.h>
 #include <vector>
 #include <string>
@@ -46,6 +48,7 @@ public:
 	void Close();
 	void DrawGrid();
 	void DrawCurrentTileBorder();
+	void OutputFile();
 
 	std::vector<Tile*> GetTilesByTextureId(std::string textureid);
 };
