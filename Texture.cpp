@@ -18,11 +18,12 @@ void Texture::GetTextureDimensions(int* w, int* h)
 	}
 }
 
-void Texture::Draw()
+void Texture::Draw(int scale)
 {
+	this->scale = scale; // Set scale so that the application knows about it
 	SDL_Rect destination;
 	destination.x = drawLocation[0]; destination.y = drawLocation[1];
-	destination.w = tileWidth*tilesPerRow; destination.h = tileHeight*tilesPerColumn;
+	destination.w = tileWidth*tilesPerRow*scale; destination.h = tileHeight*tilesPerColumn*scale;
 
 	if (SDL_RenderCopy(renderer, texture, NULL, &destination) == -1)
 	{

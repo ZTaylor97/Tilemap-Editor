@@ -1,6 +1,6 @@
 textures = {
     [0] = {
-        filepath = "./Tilesets/jungle-night.png",
+        filepath = "./Tilesets/Platformer.png",
         textureid = "test",
         tiledimensions = {
             x = 32,
@@ -8,9 +8,17 @@ textures = {
         },
         filedimensions = 
         {
-            xtiles = 10,
-            ytiles = 3
+            xtiles = 4,
+            ytiles = 2
         },
-        totaltiles = 30
+        totaltiles = 8
+    }
+}
+
+map = {
+    screens = 3,
+    screensize = {
+        x = 30,
+        y = 20
     }
 }

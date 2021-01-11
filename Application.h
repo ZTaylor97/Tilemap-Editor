@@ -32,6 +32,8 @@ private:
 
 	AssetManager *assetManager;
 	std::vector<Tile*> tiles;
+
+	SDL_Rect Camera;
 public:
 	SDL_Window* window;
 	SDL_Renderer* renderer;

@@ -35,6 +35,10 @@ void Application::Initialise()
 	ParseInputFile("./config.lua");
 	activeTexture = "test";
 
+	Camera = {
+		0,0,WindowWidth, WindowHeight
+	};
+
 	isRunning = true;
 }
 
@@ -58,8 +62,20 @@ void Application::ProcessInput()
 			{
 				isRunning = false;
 			}
+			if (event.key.keysym.sym == SDLK_RIGHT)
+			{
+				Camera.x += 32;
+			}
+
+			if (event.key.keysym.sym == SDLK_LEFT)
+			{
+				Camera.x -= 32;
+			}
 			break;
 		}
+		case SDL_KEYUP:
+
+			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
 			SDL_GetMouseState(&mouseX, &mouseY);
@@ -209,10 +225,10 @@ void Application::Render()
 
 	for (auto& tile : tiles)
 	{
-		tile->Draw();
+		tile->Draw(Camera);
 	}
 
-	assetManager->GetTexture("test")->Draw();
+	assetManager->GetTexture("test")->Draw(1);
 
 	DrawGrid();
 
@@ -311,10 +327,10 @@ void Application::DrawCurrentTileBorder()
 
 	// Create a rect for drawing that draws to the selected tile
 	SDL_Rect borderRect = {
-		thisTexture->GetDrawLocation().x + currentTileX* thisTexture->tileWidth,
-		thisTexture->GetDrawLocation().y + currentTileY * thisTexture->tileHeight,
-		thisTexture->tileWidth,
-		thisTexture->tileHeight
+		thisTexture->GetDrawLocation().x + currentTileX* thisTexture->tileWidth * thisTexture->scale,
+		thisTexture->GetDrawLocation().y + currentTileY * thisTexture->tileHeight * thisTexture->scale,
+		thisTexture->tileWidth* thisTexture->scale,
+		thisTexture->tileHeight* thisTexture->scale
 	};
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
@@ -325,13 +341,14 @@ void Application::OutputFile()
 {
 	std::ofstream outFile;
 
-	outFile.open("output.map", std::ios::out);
+	outFile.open("output.lua", std::ios::out);
 
+	outFile << "tiles = {\n";
 
 	size_t i = 0;
 	for (auto tile : tiles)
 	{
-		outFile << "[" << i << "] = {" << *tile << "}";
+		outFile << "\t[" << i << "] = {" << *tile << "\t}";
 
 		if (tile != tiles.back())
 		{
@@ -341,6 +358,6 @@ void Application::OutputFile()
 		outFile << '\n';
 		i++;
 	}
-
+	outFile << "}";
 	outFile.close();
 }
